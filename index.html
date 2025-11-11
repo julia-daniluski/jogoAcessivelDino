@@ -1,36 +1,292 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="shortcut icon" href="borboleta.png" type="image/x-icon"> 
-    <title>Desvie dos socos no The Monica Club</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Monica Club - Desvie dos Socos</title>
+<style>
+  body {
+    background: linear-gradient(#ffb3b3, #ffe5e5);
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    color: #b30000;
+    font-size: 2.4em;
+    margin-top: 15px;
+  }
+
+  #game {
+    width: 90%;
+    max-width: 800px;
+    height: 250px;
+    background: #ffcccc;
+    border: 3px solid #800000;
+    border-radius: 10px;
+    margin: 20px auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #dino {
+    width: 120px;
+    height: 120px;
+    background-image: url('borboleta.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: 0;
+    left: 60px;
+    transition: bottom 0.25s ease-out;
+  }
+
+  /* Pulo mais suave e um pouco mais alto */
+  #dino.jump {
+    bottom: 170px;
+    transition: bottom 0.25s ease-out;
+  }
+
+  /* Agachar: achata um pouco e dá um efeito engraçado */
+  #dino.duck {
+    transform: scaleY(0.7);
+    transition: transform 0.1s;
+  }
+
+  #cactus {
+    width: 80px;
+    height: 80px;
+    background-image: url('arvore.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: -100px;
+    bottom: 0;
+    transition: left 1.8s linear;
+  }
+
+  #scoreBoard {
+    color: #660000;
+    font-size: 1.2em;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  .controls {
+    margin-top: 10px;
+  }
+
+  button {
+    background-color: #cc0000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #990000;
+  }
+
+  footer {
+    margin-top: 20px;
+    padding: 10px;
+    background: #800000;
+    color: white;
+    font-size: 0.9em;
+  }
+
+  @media (max-width: 600px) {
+    #game {
+      height: 200px;
+    }
+
+    #dino {
+      width: 90px;
+      height: 90px;
+    }
+
+    #dino.jump {
+      bottom: 120px;
+    }
+
+    #cactus {
+      width: 60px;
+      height: 60px;
+    }
+
+    h1 {
+      font-size: 1.8em;
+    }
+  }
+</style>
 </head>
-
 <body>
-        <h1>Desvie dos socos no The Monica Club</h1>
-        <p>Use a barra para ajustar a velocidade. Clique em "Iniciar Jogo" para começar!</p>
 
-        <div id="game">
-            <div id="scoreBoard">
-                Tempo: <span id="time">0</span>s | Pontos: <span id="score">0</span>
-            </div>
-            <div id="dino"></div>
-            <div id="cactus"></div>
-        </div>
-        <div id="status"></div>
-        <div>
-            <label for="speedRange">Velocidade do jogo:</label>
-            <input type="range" id="speedRange" min="1" max="10" value="5">
-        </div>
-        <div>
-            <button id="startButton">Iniciar Jogo</button>
-        </div>
+<h1>Desvie dos Socos!</h1>
 
+<div id="game">
+  <div id="scoreBoard">
+    ⏱ Tempo: <span id="time">0</span>s | 💎 Pontos: <span id="score">0</span> | 🏆 Recorde: <span id="highscore">0</span>
+  </div>
+  <div id="dino"></div>
+  <div id="cactus"></div>
+</div>
 
+<div class="controls">
+  <button id="startButton">Iniciar</button>
+  <button id="jumpButton">Pular</button>
+  <button id="duckButton">Abaixar</button>
+  <button id="restartButton">Reiniciar</button>
+</div>
+
+<footer>© 2025 The Monica Club — Todos os direitos reservados.</footer>
+
+<script>
+  const dino = document.getElementById("dino");
+  const cactus = document.getElementById("cactus");
+  const scoreDisplay = document.getElementById("score");
+  const timeDisplay = document.getElementById("time");
+  const highscoreDisplay = document.getElementById("highscore");
+
+  const startButton = document.getElementById("startButton");
+  const jumpButton = document.getElementById("jumpButton");
+  const duckButton = document.getElementById("duckButton");
+  const restartButton = document.getElementById("restartButton");
+
+  let score = 0;
+  let time = 0;
+  let highscore = localStorage.getItem("highscore") || 0;
+  let isJumping = false;
+  let isDucking = false;
+  let gameStarted = false;
+  let cactusInterval, timeInterval;
+  let cactusPosition = "bottom"; // começa embaixo
+
+  highscoreDisplay.textContent = highscore;
+
+  function jump() {
+    if (!gameStarted || isJumping || isDucking) return;
+    isJumping = true;
+    dino.classList.add("jump");
+    score += 3;
+    scoreDisplay.textContent = score;
+
+    setTimeout(() => {
+      dino.classList.remove("jump");
+      isJumping = false;
+    }, 500); // pulo mais controlado
+  }
+
+  function duck() {
+    if (!gameStarted || isDucking || isJumping) return;
+    isDucking = true;
+    dino.classList.add("duck");
+    setTimeout(() => {
+      dino.classList.remove("duck");
+      isDucking = false;
+    }, 400);
+  }
+
+  function moveCactus() {
+    if (!gameStarted) return;
+    cactus.style.transition = "none";
+    cactus.style.left = "100%";
+    cactus.style.bottom = cactusPosition === "bottom" ? "0px" : "90px";
+    void cactus.offsetWidth;
+    cactus.style.transition = "left 1.8s linear";
+    cactus.style.left = "-100px";
+  }
+
+  function checkCollision() {
+    const dinoRect = dino.getBoundingClientRect();
+    const cactusRect = cactus.getBoundingClientRect();
+
+    if (
+      dinoRect.left < cactusRect.right - 15 &&
+      dinoRect.right > cactusRect.left + 15 &&
+      dinoRect.top < cactusRect.bottom - 10 &&
+      dinoRect.bottom > cactusRect.top + 10
+    ) {
+      endGame();
+    }
+  }
+
+  function startGame() {
+    if (gameStarted) return;
+    gameStarted = true;
+    score = 0;
+    time = 0;
+    cactusPosition = "bottom";
+    scoreDisplay.textContent = score;
+    timeDisplay.textContent = time;
+
+    moveCactus();
+
+    cactusInterval = setInterval(() => {
+      checkCollision();
+      if (score >= 30) cactusPosition = "middle";
+    }, 30);
+
+    timeInterval = setInterval(() => {
+      time++;
+      timeDisplay.textContent = time;
+    }, 1000);
+
+    cactus.addEventListener("transitionend", () => {
+      if (gameStarted) moveCactus();
+    });
+  }
+
+  function endGame() {
+    gameStarted = false;
+    clearInterval(cactusInterval);
+    clearInterval(timeInterval);
+
+    if (score > highscore) {
+      highscore = score;
+      localStorage.setItem("highscore", highscore);
+      highscoreDisplay.textContent = highscore;
+      alert(`🏆 Novo recorde! ${score} pontos!`);
+    } else {
+      alert(`💥 Game Over! Você fez ${score} pontos.`);
+    }
+  }
+
+  function restartGame() {
+    location.reload();
+  }
+
+  startButton.addEventListener("click", startGame);
+  restartButton.addEventListener("click", restartGame);
+  jumpButton.addEventListener("click", jump);
+  duckButton.addEventListener("click", duck);
+
+  document.addEventListener("keydown", e => {
+    if (["Space", "ArrowUp", "KeyW"].includes(e.code)) jump();
+    if (["ArrowDown", "KeyS"].includes(e.code)) duck();
+  });
+
+  // Controles mobile — deslizar para cima/baixo
+  let touchStartY = 0;
+  document.addEventListener("touchstart", e => {
+    touchStartY = e.touches[0].clientY;
+  });
+  document.addEventListener("touchend", e => {
+    let touchEndY = e.changedTouches[0].clientY;
+    if (touchStartY - touchEndY > 50) jump();
+    else if (touchEndY - touchStartY > 50) duck();
+  });
+</script>
 </body>
-
 </html>
