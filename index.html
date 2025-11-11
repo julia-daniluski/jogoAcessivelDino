@@ -4,131 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Desvie dos socos no The Monica Club</title>
-  <style>
-    body {
-      background: #7a0000; /* vermelho sangue */
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      color: #fff;
-    }
-
-    #game {
-      width: 950px;
-      height: 400px;
-      background: linear-gradient(#9cf, #fff);
-      margin: 30px auto;
-      position: relative;
-      overflow: hidden;
-      border: 3px solid #300000;
-      border-radius: 15px;
-      box-shadow: 0 0 20px #400000;
-    }
-
-    #dino {
-      width: 150px;
-      height: 150px;
-      background-image: url('borboleta.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      position: absolute;
-      bottom: 0;
-      left: 80px;
-      transition: bottom 0.25s ease-in-out, transform 0.2s;
-    }
-
-    #dino.jump {
-      bottom: 200px;
-    }
-
-    #dino.duck {
-      transform: scaleY(0.6);
-    }
-
-    #cactus {
-      width: 110px;
-      height: 110px;
-      background-image: url('arvore.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      position: absolute;
-      bottom: 0;
-      left: 950px;
-    }
-
-    #scoreBoard {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      background: rgba(255, 255, 255, 0.8);
-      color: #000;
-      padding: 5px 12px;
-      border-radius: 5px;
-    }
-
-    .controls {
-      margin-top: 15px;
-    }
-
-    button {
-      padding: 12px 20px;
-      margin: 8px;
-      cursor: pointer;
-      background-color: #840000;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-
-    button:hover {
-      background-color: #4d0000;
-    }
-
-    #jumpButton {
-      background-color: #006600;
-    }
-
-    #jumpButton:hover {
-      background-color: #004d00;
-    }
-
-    #duckButton {
-      background-color: #003366;
-    }
-
-    #duckButton:hover {
-      background-color: #001a33;
-    }
-
-    #status {
-      font-size: 20px;
-      font-weight: bold;
-      color: #fff;
-      margin-top: 15px;
-      min-height: 30px;
-    }
-
-    footer {
-      background-color: #400000;
-      color: #fff;
-      text-align: center;
-      padding: 20px 10px;
-      margin-top: 40px;
-      font-size: 14px;
-      border-top: 2px solid #700000;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="img/borboleta.png" type="image/x-icon"> 
+  <script src="script.js" defer></script>
 </head>
 <body>
   <h1>Desvie dos socos no The Monica Club</h1>
-  <p>Use os botões ou as setas para jogar!</p>
+  <p>Use a barra para ajustar a velocidade. Clique em "Iniciar Jogo" para começar!</p>
 
   <div id="game">
     <div id="scoreBoard">
@@ -137,166 +19,26 @@
     <div id="dino"></div>
     <div id="cactus"></div>
   </div>
-  
+
   <div id="status"></div>
-  
+
   <div class="controls">
     <div class="speed-control">
       <label for="speedRange">Velocidade do jogo:</label>
       <input type="range" id="speedRange" min="1" max="10" value="5">
     </div>
-    
+
     <div class="buttons">
       <button id="startButton">Iniciar Jogo</button>
-      <button id="jumpButton">PULAR</button>
-      <button id="duckButton">AGACHAR</button>
+      <button id="jumpButton">Pular</button>
+      <button id="duckButton">Abaixar</button>
     </div>
   </div>
 
   <footer>
-    <p><strong>Todos os designs e personagens pertencem a <em>Ordem Paranormal</em> e seus artistas.</strong></p>
-    <p>Este jogo é uma criação de fãs, sem fins lucrativos, feita apenas como uma homenagem e brincadeira.</p>
+    Todos os designs e personagens são de direitos autorais de <b>Ordem Paranormal</b> e seus artistas.  
+    <br>Este jogo é apenas uma brincadeira de fãs, sem fins lucrativos.
+    <br><b>@hyped_lia (twitter)</b>
   </footer>
-
-  <script>
-    const dino = document.getElementById("dino");
-    const cactus = document.getElementById("cactus");
-    const startButton = document.getElementById("startButton");
-    const jumpButton = document.getElementById("jumpButton");
-    const duckButton = document.getElementById("duckButton");
-    const scoreDisplay = document.getElementById("score");
-    const timeDisplay = document.getElementById("time");
-    const recordDisplay = document.getElementById("record");
-    const status = document.getElementById("status");
-    const speedRange = document.getElementById("speedRange");
-
-    let gameStarted = false;
-    let isJumping = false;
-    let isDucking = false;
-    let time = 0;
-    let score = 0;
-    let record = 0;
-    let speed = 2500;
-    let cactusTimer, timeInterval;
-    let cactusHeightLevel = 0;
-    let keyPressed = false;
-
-    function jump() {
-      if (!gameStarted || isJumping || isDucking) return;
-      isJumping = true;
-      dino.classList.add("jump");
-      setTimeout(() => {
-        dino.classList.remove("jump");
-        isJumping = false;
-      }, 400);
-    }
-
-    function duck() {
-      if (!gameStarted || isJumping || isDucking) return;
-      isDucking = true;
-      dino.classList.add("duck");
-      setTimeout(() => {
-        dino.classList.remove("duck");
-        isDucking = false;
-      }, 400);
-    }
-
-    function moveCactus() {
-      if (!gameStarted) return;
-      cactus.style.transition = "none";
-      cactus.style.left = "950px";
-
-      if (score >= 30) {
-        cactusHeightLevel = Math.random() < 0.5 ? 0 : 160; 
-        cactus.style.bottom = cactusHeightLevel + "px";
-      } else {
-        cactusHeightLevel = 0;
-        cactus.style.bottom = "0px";
-      }
-
-      void cactus.offsetWidth;
-      cactus.style.transition = `left ${speed / 1000}s linear`;
-      cactus.style.left = "-120px";
-    }
-
-    function checkCollision() {
-      const dinoRect = dino.getBoundingClientRect();
-      const cactusRect = cactus.getBoundingClientRect();
-
-      const overlapX = dinoRect.right > cactusRect.left + 10 && dinoRect.left < cactusRect.right - 10;
-      const overlapY = dinoRect.bottom > cactusRect.top + 10 && dinoRect.top < cactusRect.bottom - 10;
-
-      if (overlapX && overlapY) {
-        endGame();
-      }
-    }
-
-    function startGame() {
-      if (gameStarted) return;
-      gameStarted = true;
-      score = 0;
-      time = 0;
-      speed = 2500 - (speedRange.value - 1) * 200;
-      status.textContent = "";
-      scoreDisplay.textContent = score;
-      timeDisplay.textContent = time;
-      startButton.disabled = true;
-
-      moveCactus();
-
-      cactusTimer = setInterval(() => {
-        checkCollision();
-      }, 30);
-
-      timeInterval = setInterval(() => {
-        time++;
-        timeDisplay.textContent = time;
-      }, 1000);
-
-      cactus.addEventListener("transitionend", () => {
-        if (!gameStarted) return;
-        score += 3;
-        scoreDisplay.textContent = score;
-        if (score > record) {
-          record = score;
-          recordDisplay.textContent = record;
-        }
-        if (speed > 800) speed -= 50;
-        moveCactus();
-      });
-    }
-
-    function endGame() {
-      clearInterval(cactusTimer);
-      clearInterval(timeInterval);
-      gameStarted = false;
-      startButton.disabled = false;
-      status.textContent = "💥 Game Over! Tente novamente!";
-      cactus.style.transition = "none";
-    }
-
-    startButton.addEventListener("click", startGame);
-    jumpButton.addEventListener("click", jump);
-    duckButton.addEventListener("click", duck);
-
-    document.addEventListener("keydown", e => {
-      if (!keyPressed) {
-        if (["Space", "ArrowUp", "KeyW"].includes(e.code)) {
-          keyPressed = true;
-          jump();
-        }
-        if (["ArrowDown", "KeyS"].includes(e.code)) {
-          keyPressed = true;
-          duck();
-        }
-      }
-    });
-
-    document.addEventListener("keyup", e => {
-      if (["Space", "ArrowUp", "KeyW", "ArrowDown", "KeyS"].includes(e.code)) {
-        keyPressed = false;
-      }
-    });
-  </script>
 </body>
 </html>

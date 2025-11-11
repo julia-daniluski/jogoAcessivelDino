@@ -1,251 +1,101 @@
-@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap');
-
-/* ================== RESET BÁSICO ================== */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 body {
-    font-family: 'Alexandria', Arial, sans-serif;
-    background: #f0f4f8;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    touch-action: manipulation;
-    user-select: none;
+  font-family: Arial, sans-serif;
+  background-color: #8b0000;
+  color: white;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* ================== TEXTOS ================== */
 h1 {
-    color: #6d0000;
-    margin-bottom: 10px;
+  margin-top: 10px;
 }
 
-p {
-    color: #4d0000;
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-/* ================== ÁREA DO JOGO ================== */
 #game {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    height: 200px;
-    border: 2px solid #555;
-    margin: 20px auto;
-    overflow: hidden;
-    background: linear-gradient(to top, #b2ebf2 0%, #e0f7fa 100%);
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
+  width: 90%;
+  max-width: 700px;
+  height: 240px;
+  margin: 10px auto;
+  border: 3px solid #fff;
+  overflow: hidden;
+  background-image: url(fundo.png);
+  background-size: cover;
+  border-radius: 10px;
 }
 
-/* ================== DINO ================== */
-#dino {
-    width: 80px;
-    height: 80px;
-    background-image: url("borboleta.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    position: absolute;
-    bottom: 0;
-    left: 40px;
-    transition: bottom 0.3s ease-in-out;
-}
-
-#dino.jump {
-    bottom: 120px;
-}
-
-/* ================== OBSTÁCULO ================== */
-#cactus {
-    width: 60px;
-    height: 60px;
-    background-image: url("arvore.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    position: absolute;
-    bottom: 0;
-    left: 100%;
-}
-
-/* ================== PLACAR ================== */
 #scoreBoard {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #4d0000;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.85);
-    padding: 6px 12px;
-    border-radius: 6px;
-    backdrop-filter: blur(4px);
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 18px;
 }
 
-/* ================== CONTROLES ================== */
-.controls {
-    margin-top: 15px;
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+#dino {
+  position: absolute;
+  left: 40px;
+  width: 150px;
+  height: 150px;
+  background: url('borboleta.png') no-repeat center / contain;
+  bottom: -30px; /* 🔥 encosta na linha de baixo */
+  transition: transform 0.2s ease, bottom 0.2s ease;
 }
 
-.speed-control {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+/* animação de pulo */
+@keyframes jump {
+  0% { bottom: -30px; }
+  40% { bottom: 190px; }
+  60% { bottom: 190px; }
+  100% { bottom: -30px; }
 }
 
-.speed-control label {
-    font-size: 16px;
-    color: #4d0000;
-    font-weight: 600;
+.duck {
+  transform: scaleY(0.5);
+  transform-origin: bottom;
+  bottom: -30px; /* mantém encostado no chão */
 }
 
-#speedRange {
-    width: 100%;
-    max-width: 400px;
-    height: 40px;
-}
-
-/* ================== BOTÕES ================== */
-.buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
+#cactus {
+  position: absolute;
+  bottom: 0;
+  right: -100px;
+  width: 80px;
+  height: 80px;
+  background: url('arvore.png') no-repeat center / contain;
 }
 
 button {
-    padding: 15px 24px;
-    font-size: 18px;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background-color: #840000;
-    color: #fff;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    min-height: 50px;
-    touch-action: manipulation;
-}
-
-#jumpButton {
-    background-color: #006600;
-    font-size: 20px;
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 button:hover {
-    background-color: #4d0000;
+    color: #fff;
+  background: rgb(71, 0, 0);
 }
 
-#jumpButton:hover {
-    background-color: #004d00;
+footer {
+  margin-top: 10px;
+  font-size: 14px;
+  opacity: 0.8;
 }
 
-button:active {
-    transform: scale(0.96);
-}
-
-button:focus,
-input:focus {
-    outline: 3px solid #ffd54f;
-    outline-offset: 2px;
-}
-
-/* ================== STATUS E MENSAGENS ================== */
-#status {
-    margin: 15px 0;
-    min-height: 80px;
-    width: 100%;
-    max-width: 600px;
-}
-
-.game-over {
-    margin-top: 20px;
-    font-size: 22px;
-    font-weight: bold;
-    color: #ff0000;
-}
-
-/* ================== RESPONSIVIDADE ================== */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    #game {
-        height: 150px;
-    }
-
-    #dino {
-        width: 60px;
-        height: 60px;
-        left: 20px;
-    }
-
-    #dino.jump {
-        bottom: 80px;
-    }
-
-    #cactus {
-        width: 50px;
-        height: 50px;
-    }
-
-    button {
-        padding: 18px;
-        font-size: 20px;
-        min-height: 60px;
-    }
-
-    #jumpButton {
-        font-size: 22px;
-    }
-
-    .buttons {
-        gap: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    h1 {
-        font-size: 24px;
-    }
-
-    p {
-        font-size: 14px;
-    }
-
-    #game {
-        height: 120px;
-    }
-
-    #dino {
-        width: 50px;
-        height: 50px;
-    }
-
-    #dino.jump {
-        bottom: 60px;
-    }
-
-    #cactus {
-        width: 40px;
-        height: 40px;
-    }
-
-    #scoreBoard {
-        font-size: 14px;
-    }
+@media (max-width: 600px) {
+  #game {
+    height: 220px;
+  }
+  #dino {
+    width: 100px;
+    height: 100px;
+  }
+  #cactus {
+    width: 70px;
+    height: 70px;
+  }
 }
