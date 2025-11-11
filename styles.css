@@ -1,11 +1,15 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #8b0000;
   color: white;
   text-align: center;
   margin: 0;
   padding: 0;
   overflow: hidden;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2b0000 0%, #5c0000 50%, #8b0000 100%);
+  background-attachment: fixed;
+}
+
 }
 
 h1 {
@@ -76,7 +80,7 @@ button {
 }
 
 button:hover {
-    color: #fff;
+  color: #fff;
   background: rgb(71, 0, 0);
 }
 
